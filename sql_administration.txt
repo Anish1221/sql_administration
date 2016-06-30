@@ -1,0 +1,112 @@
+create database AONE_Store
+
+=============================================================================================================
+
+create table customers(customer_id int primary key auto_increment, first_name varchar(20) not null, last_name varchar(20) not null, address varchar(50) not null, email varchar(50) unique not null, contact_no int not null, added_date timestamp default current_timestamp not null, modified_date timestamp null, status tinyint(1));
+
+=============================================================================================================
+
+insert into customers (first_name, last_name, address, email, contact_no,status) values('Anish','Twayana','Bhaktapur', 'anish@gmail.com', 9789675,1);
+insert into customers (first_name, last_name, address, email, contact_no,status) values('Abhash','Pradhananga','Babarmahal', 'abhash@gmail.com', 978943575,1);
+insert into customers (first_name, last_name, address, email, contact_no,status) values('Aayush','Shrestha','Bhaktapur', 'aayush@gmail.com', 98795,1);
+insert into customers (first_name, last_name, address, email, contact_no,status) values('Nischal','Khanal','Gaushala', 'nischal@gmail.com', 92345,1);
+
+=============================================================================================================
+
+create table categories (category_id int primary key auto_increment, category_name varchar(50) not null);
+
+=============================================================================================================
+
+insert into categories (category_name) values('Mens Clothing & Shoes');
+insert into categories (category_name) values('Womens Clothing & Shoes');
+insert into categories (category_name) values('Mobiles & Tablets');
+insert into categories (category_name) values('Computer, Laptops & Gaming');
+insert into categories (category_name) values('TV, Appliances & Camera');
+
+=============================================================================================================
+
+create table products (product_id int primary key auto_increment, product_name varchar(50) not null, category_id int not null, product_qty int not null, product_price int not null,added_date timestamp default current_timestamp not null, modified_date timestamp null);
+
+=============================================================================================================
+
+insert into products (product_name, category_id, product_qty, product_price) values('Euro Jersey',1,5,550);
+insert into products (product_name, category_id, product_qty, product_price) values('Mens Printed T-shirt',1,6,999);
+insert into products (product_name, category_id, product_qty, product_price) values('Pink Designer Saree',2,2,6550);
+insert into products (product_name, category_id, product_qty, product_price) values('Pointed Heel Shoe',2,3,1650);
+insert into products (product_name, category_id, product_qty, product_price) values('OnePlus X 16GB',3,5,28699);
+insert into products (product_name, category_id, product_qty, product_price) values('iPhone 6S',3,5,75000);
+insert into products (product_name, category_id, product_qty, product_price) values('Apple Macbook Pro',4,5,182000);
+insert into products (product_name, category_id, product_qty, product_price) values('Lenovo Y700',4,3,119999);
+insert into products (product_name, category_id, product_qty, product_price) values('Cannon DSLR',5,2,112000);
+insert into products (product_name, category_id, product_qty, product_price) values('LG TV',5,1,99999);
+
+=============================================================================================================
+
+alter table products add foreign key(category_id) references categories(category_id);
+
+=============================================================================================================
+
+create table orders (order_id int primary key auto_increment, customer_id int not null, order_date timestamp default current_timestamp, payment_type enum ('Cash', 'Credit'));
+
+=============================================================================================================
+
+Insert into orders (customer_id, payment_type) values(1, 'credit');
+Insert into orders (customer_id, payment_type) values(2, 'cash');
+Insert into orders (customer_id, payment_type) values(3, 'credit');
+Insert into orders (customer_id, payment_type) values(4, 'credit');
+Insert into orders (customer_id, payment_type) values(2, 'credit');
+Insert into orders (customer_id, payment_type) values(4, 'cash');
+Insert into orders (customer_id, payment_type) values(3, 'cash');
+
+=============================================================================================================
+
+alter table orders add foreign key(customer_id) references customers(customer_id);
+
+=============================================================================================================
+
+create table order_details (details_id int primary key auto_increment, order_id int not null, product_id int not null, price int not null, qty int not null, discount decimal(3,2) not null);
+
+=============================================================================================================
+
+Insert into order_details (order_id, product_id, price, qty, discount) values(1, 9,112000,1,0.10);
+Insert into order_details (order_id, product_id, price, qty, discount) values(2, 7,182000,2,0.15);
+Insert into order_details (order_id, product_id, price, qty, discount) values(3, 2,999,1,0.5);
+Insert into order_details (order_id, product_id, price, qty, discount) values(4, 3,6550,2,0.20);
+Insert into order_details (order_id, product_id, price, qty, discount) values(5, 1,550,3,0.0);
+Insert into order_details (order_id, product_id, price, qty, discount) values(6, 5,28699,4,0.17);
+Insert into order_details (order_id, product_id, price, qty, discount) values(7, 6,75000,5,0.25);
+
+=============================================================================================================
+
+alter table order_details add foreign key(order_id) references orders(order_id);
+alter table order_details add foreign key(product_id) references products(product_id);
+
+=============================================================================================================
+
+//Display email and contactno of customers
+Select email,contact_no from customers
+
+=============================================================================================================
+
+create view customer_fullname as select concat(first_name ,'', last_name) as full_name from customers;
+
+=============================================================================================================
+
+select c.first_name, c.last_name, o.payment_type from customers c, orders o where c.customer_id=o.customer_id and o.payment_type='credit'; 
+select c.first_name, c.last_name, o.payment_type from customers c, orders o where c.customer_id=o.customer_id and o.payment_type='cash';
+
+============================================================================================================= 
+
+select product_name, min(od.qty) from products p, order_details od where p.product_id=od.product_id;
+
+select product_name, max(od.qty) from products p, order_details od where p.product_id=od.product_id;
+
+
+
+=============================================================================================================
+
+
+
+=============================================================================================================
+
+
